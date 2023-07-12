@@ -1,13 +1,16 @@
 ---
-title: "Revolutionizing Machine Learning in the Browser: Harnessing the Power of WEBGPU Backend"
-description: Exciting news! I've successfully merged the WEBGPU backend into TinyGrad, enabling seamless execution of machine learning models directly in the browser.
-keywords 
+title: "Revolutionizing Machine Learning in the Browser: Harnessing the Power of WEBGPU"
+description: All you need is the browser, a journey on the implementation of WEBGPU backend in tinygrad and the next evolution of machine learning models.
+keywords: machine learning, 
 date: 2023-07-12T18:01:38-04:00
+params:
+    ShowShareButtons: true
 ---
 
 
-
 In recent years, the field of machine learning has seen remarkable advancements, enabling us to build complex and accurate models. However, running these models often requires significant computational resources and specialized hardware. Enter the WEBGPU backend, a groundbreaking development that allows machine learning models to be exported and run directly in the browser. In this blog post, I will share my experience implementing the WEBGPU backend in a machine learning framework and demonstrate the exceptional speed and efficiency achieved by running an EfficientNet model in the browser.
+
+{{< efficientnet_demo >}}
 
 It all started with a simple question: "Could we integrate WEBGPU into tinygrad?" I was already aware of WEBGPU and the promises it seeked to bring, but it was and still is early in its implementation, also there wasn't too many options for running and testing code outside the browser. 
 
