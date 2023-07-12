@@ -2,13 +2,12 @@
 	<hr>
 	<div style="display: flex; flex-direction: column; margin: 1rem 0;">
 		<h2>DEMO WebGPU EfficientNet</h2>
-
-		<div id="mybox" style="display: flex; flex-direction: row;">
-			<input type="text" style="flex-grow: 1; color: white; border-bottom: 1px solid white;" id="url"
-				placeholder="Url here"
-				value="https://upload.wikimedia.org/wikipedia/commons/d/da/Norwegian_hen.jpg">
+		<p>Note: The demo currently only works through the latest version of chrome on desktop </p>
+		<div id="mybox" style="display: flex; flex-direction: row; gap: 10px;">
+			<input type="text" style="flex-grow: 1; color: var(--content); border-bottom: 1px solid var(--content);" id="url"
+				placeholder="Url here" value="https://upload.wikimedia.org/wikipedia/commons/d/da/Norwegian_hen.jpg">
 			<input type="button"
-				style="cursor: pointer; background-color: lightgray; padding: 2px 5px; border-radius: 2px; text-transform: uppercase; font-weight: bold;"
+				style="cursor: pointer; background-color: var(--code-bg); color: var(--content); padding: 2px 5px; border-radius: 2px; text-transform: uppercase; font-weight: bold;"
 				onclick="runNetWResource(document.getElementById('url').value)" value="Run">
 		</div>
 		<br />
@@ -16,9 +15,15 @@
 		<img id="imagebox"></img>
 		<canvas id="canvas" width="200" height="200" style="display: none;"> </canvas>
 		<div id="resultbox">
-			<div id="result">result will go here</div>
-			<div>Completed in <span id="time">0</span>ms, powered by <a
-					href="https://github.com/geohot/tinygrad">tinygrad</a></div>
+			<div style="display: flex; flex-direction: column; align-items: center;">
+				<span>The image contains a:</span>
+				<span id="result"></span>
+			</div>
+
+			<div>
+				Completed in <span id="time">0</span>ms, powered by
+				<a href="https://github.com/geohot/tinygrad">tinygrad</a>
+			</div>
 			<hr>
 			<div>
 				<script src="/efficientnet/net.js"></script>
@@ -28,12 +33,12 @@
 					let labels, net;
 
 					const error = (err) => {
-						resultText.innerHTML = `Error: ${err}`;
+						resultText.innerHTML = `😔: ${err}`;
 						throw new Error(err);
 					}
 
 					const getDevice = async () => {
-						if (!navigator.gpu) error("WebGPU not supported.");
+						if (!navigator.gpu) error("WebGPU not supported on your device.");
 						const adapter = await navigator.gpu.requestAdapter();
 						return await adapter.requestDevice();
 					};
