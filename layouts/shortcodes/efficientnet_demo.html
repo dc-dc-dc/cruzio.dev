@@ -35,7 +35,7 @@
 					let labels, net;
 
 					const error = (err) => {
-						resultText.innerHTML = `😔: ${err}`;
+						resultText.innerHTML = `😔 ${err}`;
 						throw new Error(err);
 					}
 
@@ -76,20 +76,24 @@
 						runButton.value = "Running..."
 						runButton.disabled = true;
 						if (resource == "") error("could not load from url, try a different one");
-						const response = await fetch(resource)
-						console.log(response);
-						if (!response.ok) error("could not load from url, try a different one");
-						document.getElementById("imagebox").src = resource
+						try {
+							const response = await fetch(resource)
+							console.log(response);
+							if (!response.ok) error("could not load from url, try a different one");
+							document.getElementById("imagebox").src = resource
 
-						const img = new Image();
-						img.crossOrigin = "Anonymous";
-						img.onload = () => {
-							URL.revokeObjectURL(img.src);
-							ctx.drawImage(img, 0, 0, 224, 224);
-							const data = ctx.getImageData(0, 0, 224, 224).data;
-							runNet(data)
-						};
-						img.src = resource;
+							const img = new Image();
+							img.crossOrigin = "Anonymous";
+							img.onload = () => {
+								URL.revokeObjectURL(img.src);
+								ctx.drawImage(img, 0, 0, 224, 224);
+								const data = ctx.getImageData(0, 0, 224, 224).data;
+								runNet(data)
+							};
+							img.src = URL.createObjectURL(await response.blob());
+						} catch(e) {
+							error("could not load from url, try a different one");
+						}
 					}
 
 					const loadLet = async () => {
