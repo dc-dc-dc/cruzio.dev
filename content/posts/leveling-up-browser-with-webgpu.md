@@ -26,8 +26,4 @@ With the WEBGPU backend in place, the possibilities are endless. From running co
 
 Implementing the WEBGPU backend to tinygrad has been an incredible journey of learning, perseverance, and awe-inspiring discoveries. Witnessing the power of machine learning come to life in the browser is nothing short of magical. As we explore this new frontier, let us embrace the possibilities and unlock a world where machine learning is accessible to all, without any barriers.
 
-So, what are you waiting for? Dive into the world of browser-based machine learning and let your imagination soar as you witness the future unfolding before your eyes. The age of web-powered machine learning has arrived!
-
-Remember, the journey of learning is never-ending, and there's always something new to discover. Embrace the challenges, keep pushing the boundaries, and continue to innovate. Who knows what wonders await us in the ever-evolving world of technology!
-
 Happy coding, and may your web-powered machine learning adventures be as exhilarating as mine.
