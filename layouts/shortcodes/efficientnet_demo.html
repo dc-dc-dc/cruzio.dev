@@ -6,9 +6,9 @@
 		<div id="mybox" style="display: flex; flex-direction: row; gap: 10px;">
 			<input type="text" style="flex-grow: 1; color: var(--content); border-bottom: 1px solid var(--content);" id="url"
 				placeholder="Url here" value="https://upload.wikimedia.org/wikipedia/commons/d/da/Norwegian_hen.jpg">
-			<input type="button"
+			<input type="button" disabled id="actionRun"
 				style="cursor: pointer; background-color: var(--code-bg); color: var(--content); padding: 2px 5px; border-radius: 2px; text-transform: uppercase; font-weight: bold;"
-				onclick="runNetWResource(document.getElementById('url').value)" value="Run">
+				onclick="runNetWResource(document.getElementById('url').value)" value="Loading">
 		</div>
 		<br />
 
@@ -16,7 +16,7 @@
 		<canvas id="canvas" width="200" height="200" style="display: none;"> </canvas>
 		<div id="resultbox">
 			<div style="display: flex; flex-direction: column; align-items: center;">
-				<span>The image contains a:</span>
+				<span class="hiddenUntilReady">The image contains a:</span>
 				<span id="result"></span>
 			</div>
 
@@ -30,6 +30,8 @@
 				<script>
 					const ctx = document.getElementById("canvas").getContext("2d", { willReadFrequently: true });
 					const resultText = document.getElementById('result');
+					const runButton = document.getElementById('actionRun');
+					const hiddenElements = document.getElementsByClassName('hiddenUntilReady');
 					let labels, net;
 
 					const error = (err) => {
@@ -70,9 +72,12 @@
 					};
 
 					const runNetWResource = async (resource) => {
-						resultText.innerHTML = "pending..."
+						resultText.innerHTML = "Running..."
+						runButton.value = "Running..."
+						runButton.disabled = true;
 						if (resource == "") error("could not load from url, try a different one");
 						const response = await fetch(resource)
+						console.log(response);
 						if (!response.ok) error("could not load from url, try a different one");
 						document.getElementById("imagebox").src = resource
 
@@ -94,6 +99,9 @@
 						const device = await getDevice();
 						net = await timer(() => setupNet(device, safetensor), "(compilation)");
 						resultText.innerHTML = "ready"
+						runButton.disabled = false;
+						runButton.value = "Run";
+						hiddenElements.forEach((el) => el.classList.remove("hiddenUntilReady"));
 					}
 
 					const runNet = async (data) => {
@@ -104,7 +112,8 @@
 
 						const arr = Array.from(new Float32Array(out));
 						const index = arr.indexOf(Math.max(...arr));
-
+						runButton.disabled = false;
+						runButton.value = "Run";
 						resultText.textContent = labels[index];
 					};
 
