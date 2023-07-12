@@ -1,8 +1,8 @@
 <div>
 	<hr>
 	<div style="display: flex; flex-direction: column; margin: 1rem 0;">
-		<h2>DEMO WebGPU EfficientNet</h2>
-		<p>Note: The demo currently only works through the latest version of chrome on desktop </p>
+		<h2>WebGPU EfficientNet Demo</h2>
+		<p style="font-size: .8rem; text-align: center;">Note: The demo currently only works through the latest version of chrome on desktop </p>
 		<div id="mybox" style="display: flex; flex-direction: row; gap: 10px;">
 			<input type="text" style="flex-grow: 1; color: var(--content); border-bottom: 1px solid var(--content);" id="url"
 				placeholder="Url here" value="https://upload.wikimedia.org/wikipedia/commons/d/da/Norwegian_hen.jpg">
@@ -16,14 +16,14 @@
 		<canvas id="canvas" width="200" height="200" style="display: none;"> </canvas>
 		<div id="resultbox">
 			<div style="display: flex; flex-direction: column; align-items: center;">
-				<span class="hiddenUntilReady">The image contains a:</span>
+				<span class="hiddenUntilReady">The image contains a - </span>
 				<span id="result"></span>
 			</div>
 
 			<div>
-				Completed in <span id="time">0</span>ms, powered by
-				<a href="https://github.com/geohot/tinygrad">tinygrad</a>
+				Computed in <span id="time">0</span>ms
 			</div>
+			<span style="font-size: .8rem; text-align: center;">powerd by <a href="https://github.com/geohot/tinygrad">tinygrad</a></span>
 			<hr>
 			<div>
 				<script src="/efficientnet/net.js"></script>
@@ -51,7 +51,7 @@
 						const out = await func();
 						const delta = (performance.now() - start).toFixed(1)
 						console.log(`${delta}`);
-						document.getElementById('time').innerHTML = `${delta} ms ${label}`;
+						document.getElementById('time').innerHTML = `${delta}`;
 						return out;
 					}
 
@@ -101,10 +101,10 @@
 						labels = await getLabels();
 						const safetensor = await getSavetensorBuffer();
 						const device = await getDevice();
-						net = await timer(() => setupNet(device, safetensor), "(compilation)");
-						resultText.innerHTML = "ready"
+						net = await timer(() => setupNet(device, safetensor));
 						runButton.disabled = false;
 						runButton.value = "Run";
+						resultText.innerHTML = "";
 						hiddenElements.forEach((el) => el.classList.remove("hiddenUntilReady"));
 					}
 

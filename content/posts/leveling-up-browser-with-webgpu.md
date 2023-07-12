@@ -12,13 +12,13 @@ In recent years, the field of machine learning has seen remarkable advancements,
 
 {{< efficientnet_demo >}}
 
-It all started with a simple question: "Could we integrate WEBGPU into tinygrad?" I was already aware of WEBGPU and the promises it seeked to bring, but it was and still is early in its implementation, also there wasn't too many options for running and testing code outside the browser. 
+It all started with a simple question: "Could we integrate WEBGPU into tinygrad?" I was already aware of WEBGPU and the promises it seeked to bring, but it was and still is early in its implementation. There also wasn't too many options for running and testing code outside the browser. 
 
-I stumbled upon a WEBGPU implementation in rust with python bindings designed to unleash the full potential of modern GPUs. This low-level graphics and compute API promised the speed and performance required to execute machine learning models efficiently using WGSL(WEBGPU shader syntax).
+I stumbled upon a WEBGPU implementation in rust with python bindings called [wgpu-py](https://github.com/pygfx/wgpu-py) designed to unleash the full potential of modern GPUs. This low-level graphics and compute API promised the speed and performance required to execute machine learning models efficiently using WGSL(WEBGPU shader language).
 
-Implementing the WEBGPU backend into tinygrad was no easy task. It required diving deep into the documentation, learning the ins and outs of WEBGPU programming, and understanding how to leverage the power of parallel processing. But with every challenge came a valuable lesson, and I was determined to crack the code.
+Implementing the WEBGPU backend into tinygrad was no easy task. It required diving deep into the documentation of wgpu-py, learning the ins and outs of WGSL, and understanding how to leverage the power of WEBGPU. But with every challenge came a valuable lesson, and I was determined to crack the code.
 
-After overcoming numerous hurdles, I finally implemented the WEBGPU backend successfully. To test its true potential, I decided to port an Efficientnet model into WEBGPU and see what kind of performance I could get.
+After overcoming numerous hurdles, I finally implemented the WEBGPU backend for tinygrad in its entirety. To test its true potential, I decided to port an Efficientnet model into WEBGPU and see what kind of performance I could get in the browser.
 
 The results left me speechless! The model ran at lightning speed, making predictions in near real-time, all within the confines of a web browser. It was a magical moment, witnessing the culmination of my efforts as the Efficientnet model seamlessly analyzed and processed images with remarkable accuracy.
 
