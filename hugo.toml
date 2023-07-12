@@ -2,6 +2,7 @@ baseURL = 'https://cruzio.dev/'
 languageCode = 'en-us'
 theme = 'PaperMod'
 title = 'cruzio dev blog'
+googleAnalytics = 'G-SM0LMV5REC'
 
 [params]
 env = "production"
