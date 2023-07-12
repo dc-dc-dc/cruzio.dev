@@ -93,6 +93,8 @@
 							img.src = URL.createObjectURL(await response.blob());
 						} catch(e) {
 							error("could not load from url, try a different one");
+							runButton.disabled = false;
+							runButton.value = "Run";
 						}
 					}
 
