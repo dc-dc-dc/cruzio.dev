@@ -2,10 +2,12 @@
 	<hr>
 	<div style="display: flex; flex-direction: column; margin: 1rem 0;">
 		<h2>WebGPU EfficientNet Demo</h2>
-		<p style="font-size: .8rem; text-align: center;">Note: The demo currently only works through the latest version of chrome on desktop </p>
+		<p style="font-size: .8rem; text-align: center;">Note: The demo currently only works through the latest version
+			of chrome on desktop </p>
 		<div id="mybox" style="display: flex; flex-direction: row; gap: 10px;">
-			<input type="text" style="flex-grow: 1; color: var(--content); border-bottom: 1px solid var(--content);" id="url"
-				placeholder="Url here" value="https://upload.wikimedia.org/wikipedia/commons/d/da/Norwegian_hen.jpg">
+			<input type="text" style="flex-grow: 1; color: var(--content); border-bottom: 1px solid var(--content);"
+				id="url" placeholder="Url here"
+				value="https://upload.wikimedia.org/wikipedia/commons/d/da/Norwegian_hen.jpg">
 			<input type="button" disabled id="actionRun"
 				style="cursor: pointer; background-color: var(--code-bg); color: var(--content); padding: 2px 5px; border-radius: 2px; text-transform: uppercase; font-weight: bold;"
 				onclick="runNetWResource(document.getElementById('url').value)" value="Loading">
@@ -23,106 +25,110 @@
 			<div>
 				Computed in <span id="time">0</span>ms
 			</div>
-			<span style="font-size: .8rem; text-align: center;">powerd by <a href="https://github.com/geohot/tinygrad">tinygrad</a></span>
+			<span style="font-size: .8rem; text-align: center;">powerd by <a
+					href="https://github.com/geohot/tinygrad">tinygrad</a></span>
 			<hr>
-			<div>
-				<script src="/efficientnet/net.js"></script>
-				<script>
-					const ctx = document.getElementById("canvas").getContext("2d", { willReadFrequently: true });
-					const resultText = document.getElementById('result');
-					const runButton = document.getElementById('actionRun');
-					const hiddenElements = document.getElementsByClassName('hiddenUntilReady');
-					let labels, net;
+		</div>
+	</div>
 
-					const error = (err) => {
-						resultText.innerHTML = `😔 ${err}`;
-						// throw new Error(err);
-					}
+	<script src="/efficientnet/net.js"></script>
+	<script src="https://github.com/dc-dc-dc/safetensors-js/releases/download/v0.0.1/safetensors.umd.js"></script>
+	<script>
+		const ctx = document.getElementById("canvas").getContext("2d", { willReadFrequently: true });
+		const resultText = document.getElementById('result');
+		const runButton = document.getElementById('actionRun');
+		const hiddenElements = document.getElementsByClassName('hiddenUntilReady');
+		let labels, net;
 
-					const getDevice = async () => {
-						if (!navigator.gpu) error("WebGPU not supported on your device.");
-						const adapter = await navigator.gpu.requestAdapter();
-						return await adapter.requestDevice();
-					};
+		const error = (err) => {
+			resultText.innerHTML = `😔 ${err}`;
+			// throw new Error(err);
+		}
 
-					const timer = async (func, label = "") => {
-						document.getElementById('time').innerHTML = "";
-						const start = performance.now();
-						const out = await func();
-						const delta = (performance.now() - start).toFixed(1)
-						console.log(`${delta}`);
-						document.getElementById('time').innerHTML = `${delta}`;
-						return out;
-					}
+		const getDevice = async () => {
+			if (!navigator.gpu) error("WebGPU not supported on your device.");
+			const adapter = await navigator.gpu.requestAdapter();
+			return await adapter.requestDevice();
+		};
 
-					const getLabels = async () => (await fetch("https://raw.githubusercontent.com/anishathalye/imagenet-simple-labels/master/imagenet-simple-labels.json")).json();
+		const timer = async (func, label = "") => {
+			document.getElementById('time').innerHTML = "";
+			const start = performance.now();
+			const out = await func();
+			const delta = (performance.now() - start).toFixed(1)
+			console.log(`${delta}`);
+			document.getElementById('time').innerHTML = `${delta}`;
+			return out;
+		}
 
-					const getSavetensorBuffer = async () => new Uint8Array(await (await fetch("/efficientnet/net.safetensors")).arrayBuffer());
+		const getLabels = async () => (await fetch("https://raw.githubusercontent.com/anishathalye/imagenet-simple-labels/master/imagenet-simple-labels.json")).json();
 
-					const reorderChannelsAndRemoveAlpha = (data) => {
-						const out = [];
-						let i = 0;
-						for (let c = 0; c < 3; c++) {
-							for (let x = 0; x < 224 * 224; x++) {
-								out[i] = data[x * 4 + c];
-								i++;
-							}
-						}
-						return out;
-					};
+		const getSavetensorBuffer = async () => await safetensors.loadSafeTensor("/efficientnet/net.safetensors");
 
-					const runNetWResource = async (resource) => {
-						resultText.innerHTML = "Running..."
-						runButton.value = "Running..."
-						runButton.disabled = true;
-						if (resource == "") error("could not load from url, try a different one");
-						try {
-							const response = await fetch(resource)
-							console.log(response);
-							if (!response.ok) error("could not load from url, try a different one");
-							document.getElementById("imagebox").src = resource
+		const reorderChannelsAndRemoveAlpha = (data) => {
+			const out = [];
+			let i = 0;
+			for (let c = 0; c < 3; c++) {
+				for (let x = 0; x < 224 * 224; x++) {
+					out[i] = data[x * 4 + c];
+					i++;
+				}
+			}
+			return out;
+		};
 
-							const img = new Image();
-							img.crossOrigin = "Anonymous";
-							img.onload = () => {
-								URL.revokeObjectURL(img.src);
-								ctx.drawImage(img, 0, 0, 224, 224);
-								const data = ctx.getImageData(0, 0, 224, 224).data;
-								runNet(data)
-							};
-							img.src = URL.createObjectURL(await response.blob());
-						} catch(e) {
-							error("could not load from url, try a different one");
-							runButton.disabled = false;
-							runButton.value = "Run";
-						}
-					}
+		const runNetWResource = async (resource) => {
+			resultText.innerHTML = "Running..."
+			runButton.value = "Running..."
+			runButton.disabled = true;
+			if (resource == "") error("could not load from url, try a different one");
+			try {
+				const response = await fetch(resource)
+				console.log(response);
+				if (!response.ok) error("could not load from url, try a different one");
+				document.getElementById("imagebox").src = resource
 
-					const loadLet = async () => {
-						resultText.innerHTML = "loading..."
-						labels = await getLabels();
-						const safetensor = await getSavetensorBuffer();
-						const device = await getDevice();
-						net = await timer(() => setupNet(device, safetensor));
-						runButton.disabled = false;
-						runButton.value = "Run";
-						resultText.innerHTML = "";
-						hiddenElements.forEach((el) => el.classList.remove("hiddenUntilReady"));
-					}
+				const img = new Image();
+				img.crossOrigin = "Anonymous";
+				img.onload = () => {
+					URL.revokeObjectURL(img.src);
+					ctx.drawImage(img, 0, 0, 224, 224);
+					const data = ctx.getImageData(0, 0, 224, 224).data;
+					runNet(data)
+				};
+				img.src = URL.createObjectURL(await response.blob());
+			} catch (e) {
+				error("could not load from url, try a different one");
+				runButton.disabled = false;
+				runButton.value = "Run";
+			}
+		}
 
-					const runNet = async (data) => {
-						if (!net) error("Net not loaded yet.");
+		const loadLet = async () => {
+			resultText.innerHTML = "loading..."
+			labels = await getLabels();
+			const safetensor = await getSavetensorBuffer();
+			const device = await getDevice();
+			net = await timer(() => setupNet(device, safetensor));
+			runButton.disabled = false;
+			runButton.value = "Run";
+			resultText.innerHTML = "";
+			hiddenElements.forEach((el) => el.classList.remove("hiddenUntilReady"));
+		}
 
-						const input = reorderChannelsAndRemoveAlpha(Array.from(data).map((pix) => (pix / 255.0) * 0.45 - 0.225));
-						const out = await timer(() => net(new Float32Array(input)));
+		const runNet = async (data) => {
+			if (!net) error("Net not loaded yet.");
 
-						const arr = Array.from(new Float32Array(out));
-						const index = arr.indexOf(Math.max(...arr));
-						runButton.disabled = false;
-						runButton.value = "Run";
-						resultText.textContent = labels[index];
-					};
+			const input = reorderChannelsAndRemoveAlpha(Array.from(data).map((pix) => (pix / 255.0) * 0.45 - 0.225));
+			const out = await timer(() => net(new Float32Array(input)));
 
-					loadLet();
-				</script>
-			</div>
+			const arr = Array.from(new Float32Array(out));
+			const index = arr.indexOf(Math.max(...arr));
+			runButton.disabled = false;
+			runButton.value = "Run";
+			resultText.textContent = labels[index];
+		};
+
+		loadLet();
+	</script>
+</div>
